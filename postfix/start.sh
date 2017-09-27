@@ -54,8 +54,8 @@ fi
 
 # Actually run Postfix
 [[ -f /var/run/rsyslogd.pid ]] && rm -f /var/run/rsyslogd.pid
-[[ -d /srv/postfix/queue ]] || mkdir /queue
+[[ -d /srv/postfix/queue ]] || mkdir -p /srv/postfix/queue
 chown -R postfix /srv/postfix/queue
 /usr/lib/postfix/post-install meta_directory=/etc/postfix create-missing
 
-/usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+exec /usr/bin/supervisord -c /etc/supervisord.conf
