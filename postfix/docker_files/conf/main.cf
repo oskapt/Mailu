@@ -8,7 +8,7 @@ myhostname = {{ HOSTNAME }}
 myorigin = $mydomain
 
 # Queue location
-queue_directory = /queue
+queue_directory = /srv/postfix/queue
 
 # Message size limit
 message_size_limit = {{ MESSAGE_SIZE_LIMIT }}

@@ -16,7 +16,7 @@ vars=(
 )
 
 # Substitute configuration
-for VARIABLE in $vars; do
+for VARIABLE in ${vars[@]}; do
   sed -i "s={{ $VARIABLE }}=${!VARIABLE}=g" /etc/postfix/*.cf
 done
 
@@ -52,10 +52,14 @@ else
   echo "No extra map files loaded because optional '/srv/postfix/overrides/*.map' not provided."
 fi
 
-# Actually run Postfix
+# rsyslog cleanup
 [[ -f /var/run/rsyslogd.pid ]] && rm -f /var/run/rsyslogd.pid
+
+# Postfix setup
 [[ -d /srv/postfix/queue ]] || mkdir -p /srv/postfix/queue
-chown -R postfix /srv/postfix/queue
+[[ -d /srv/postfix/data ]] || mkdir -p /srv/postfix/data
+chown -R postfix /srv/postfix/{queue,data}
 /usr/lib/postfix/post-install meta_directory=/etc/postfix create-missing
 
+# Hand control to supervisor
 exec /usr/bin/supervisord -c /etc/supervisord.conf
