@@ -24,37 +24,38 @@ done
 if [[ -f /srv/postfix/overrides/postfix.cf ]]; then
   while read line; do
     postconf -e "$line"
-  done < /overrides/postfix.cf
-  echo "Loaded '/overrides/postfix.cf'"
+  done < /srv/postfix/overrides/postfix.cf
+  echo "Loaded '/srv/postfix/overrides/postfix.cf'"
 else
-  echo "No extra postfix settings loaded because optional '/overrides/postfix.cf' not provided."
+  echo "No extra postfix settings loaded because optional '/srv/postfix/overrides/postfix.cf' not provided."
 fi
 
 # Override Postfix master configuration
-if [[ -f /overrides/postfix.master ]]; then
+if [[ -f /srv/postfix/overrides/postfix.master ]]; then
   while read line; do
     postconf -Me "$line"
-  done < /overrides/postfix.master
-  echo "Loaded '/overrides/postfix.master'"
+  done < /srv/postfix/overrides/postfix.master
+  echo "Loaded '/srv/postfix/overrides/postfix.master'"
 else
-  echo "No extra postfix settings loaded because optional '/overrides/postfix.master' not provided."
+  echo "No extra postfix settings loaded because optional '/srv/postfix/overrides/postfix.master' not provided."
 fi
 
 # Include table-map files
-if ls -A /overrides/*.map 1> /dev/null 2>&1; then
-  cp /overrides/*.map /etc/postfix/
+if [[ $(ls -A /srv/postfix/overrides/*.map 2> /dev/null | wc -l ) -gt 0 ]]; then
+  cp /srv/postfix/overrides/*.map /etc/postfix/
   postmap /etc/postfix/*.map
   rm /etc/postfix/*.map
   chown root:root /etc/postfix/*.db
   chmod 0600 /etc/postfix/*.db
   echo "Loaded 'map files'"
 else
-  echo "No extra map files loaded because optional '/overrides/*.map' not provided."
+  echo "No extra map files loaded because optional '/srv/postfix/overrides/*.map' not provided."
 fi
 
 # Actually run Postfix
-rm -f /var/run/rsyslogd.pid
-chown -R postfix: /queue
+[[ -f /var/run/rsyslogd.pid ]] && rm -f /var/run/rsyslogd.pid
+[[ -d /srv/postfix/queue ]] || mkdir /queue
+chown -R postfix /srv/postfix/queue
 /usr/lib/postfix/post-install meta_directory=/etc/postfix create-missing
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
