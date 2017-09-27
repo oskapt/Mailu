@@ -1,7 +1,22 @@
 #!/bin/bash
 
+: ${DOMAIN:=example.com}
+: ${HOSTNAME:=mail.${DOMAIN}}
+: ${MESSAGE_SIZE_LIMIT:=50000000}
+: ${RELAYNETS:=10.42.0.0/16}
+: ${RECIPIENT_DELIMITER:="+"}
+
+vars=( 
+  DOMAIN 
+  HOSTNAME 
+  MESSAGE_SIZE_LIMIT 
+  RELAYNETS 
+  RELAYHOST 
+  RECIPIENT_DELIMITER 
+)
+
 # Substitute configuration
-for VARIABLE in `env | cut -f1 -d=`; do
+for VARIABLE in $vars; do
   sed -i "s={{ $VARIABLE }}=${!VARIABLE}=g" /etc/postfix/*.cf
 done
 
