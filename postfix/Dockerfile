@@ -1,10 +1,10 @@
 FROM alpine:latest
 
-RUN apk add --no-cache bash postfix postfix-sqlite postfix-pcre rsyslog
+RUN apk add --no-cache bash postfix postfix-sqlite postfix-pcre rsyslog supervisor
 
-COPY conf /etc/postfix
-COPY rsyslog.conf /etc/rsyslog.conf
-
+COPY docker_files/conf /etc/postfix
+COPY docker_files/rsyslog.conf /etc/rsyslog.conf
+COPY docker_files/listen.conf /etc/rsyslog.d/listen.conf
 COPY start.sh /start.sh
 
 CMD ["/start.sh"]

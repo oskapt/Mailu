@@ -1,4 +1,4 @@
-dbpath = /data/main.db
+dbpath = /srv/postfix/data/main.db
 query =
   SELECT destination
    FROM

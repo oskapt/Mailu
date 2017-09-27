@@ -21,7 +21,7 @@ for VARIABLE in $vars; do
 done
 
 # Override Postfix main configuration
-if [ -f /overrides/postfix.cf ]; then
+if [[ -f /srv/postfix/overrides/postfix.cf ]]; then
   while read line; do
     postconf -e "$line"
   done < /overrides/postfix.cf
@@ -31,7 +31,7 @@ else
 fi
 
 # Override Postfix master configuration
-if [ -f /overrides/postfix.master ]; then
+if [[ -f /overrides/postfix.master ]]; then
   while read line; do
     postconf -Me "$line"
   done < /overrides/postfix.master
@@ -56,5 +56,5 @@ fi
 rm -f /var/run/rsyslogd.pid
 chown -R postfix: /queue
 /usr/lib/postfix/post-install meta_directory=/etc/postfix create-missing
-/usr/lib/postfix/master &
-exec rsyslogd -n
+
+/usr/bin/supervisord -c /etc/supervisor/supervisord.conf
